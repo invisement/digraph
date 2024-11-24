@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>DiaGraph</title>
+
+	<script type="importmap">
+		{
+		  "imports": {
+			"@viz-js/viz": "https://esm.sh/@viz-js/viz",
+
+			"codejar": "https://unpkg.com/codejar/dist/codejar.js",
+			"codejar-linenumbers": "https://unpkg.com/codejar-linenumbers/es/index.js"
+		  }
+		}
+	  </script>
+
+	<!--
+	<script src="https://unpkg.com/codeflask/build/codeflask.min.js"></script>
+	<script type="module" src="index.js"></script>
+	<link rel="stylesheet" href="https://unpkg.com/codejar-linenumbers/es/codejar-linenumbers.css" />
+ -->
+	<script type="module" src="./index.js"></script>
+	<link rel="stylesheet" href="./index.css">
+
+</head>
+
+<body>
+	<top-menu class="top-bar"></top-menu>
+	<div class="content">
+		<div contenteditable class="left-bar editor"></div>
+		<div contenteditable class="right-bar diagram"></div>
+	</div>
+
+</body>
+
+</html>

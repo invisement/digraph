@@ -1,0 +1,13 @@
+{
+	"tasks": {
+		"dev": "deno run -A --watch server.ts --watch-ui"
+	},
+	"imports": {
+		"@invisement/husk": "jsr:@invisement/husk@^0.4.61",
+		"@std/assert": "jsr:@std/assert@1",
+		"@std/http": "jsr:@std/http@1",
+		"@viz-js/viz": "npm:@viz-js/viz@^3.11.0",
+		"codejar": "npm:codejar@^4.2.0",
+		"lit": "npm:lit@^3.2.1"
+	}
+}
