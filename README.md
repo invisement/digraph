@@ -1,4 +1,5 @@
-# Grapher
+# Diagraph
+
 Code to diagram for cloud architecture
 
 ```sh
@@ -7,5 +8,5 @@ deno task dev
 ```
 
 ## Stack
-deno + husk + graphviz.js
 
+deno + husk + graphviz.js
