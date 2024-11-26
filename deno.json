@@ -1,29 +1,37 @@
 {
-	"tasks": {
-		"install": "deno install --reload; deno install jsr:@deno/deployctl --allow-import;",
-		"dev": "deno run -A --watch server.ts --watch-ui",
-		"build": "deno run -A jsr:@invisement/husk/transpile-ui",
-		"prod": "deno run -A server.ts",
-		"deploy": "deno task install; deno task build; deployctl deploy --entrypoint=\"deno task prod\" server.ts;",
-		"docs": "deno run -A jsr:@invisement/husk/imports-graph"
-	},
-	"compilerOptions": {
-		"lib": [
-			"dom",
-			"esnext",
-			"dom.iterable",
-			"deno.ns"
-		]
-	},
-	"fmt": {
-		"useTabs": true,
-		"indentWidth": 4
-	},
-	"imports": {
-		"@deno/deployctl": "jsr:@deno/deployctl@^1.13.0",
-		"@invisement/husk": "jsr:@invisement/husk@^0.4.62",
-		"@invisement/husk/transpile-ui": "jsr:@invisement/husk@^0.4.62/transpile-ui",
-		"@viz-js/viz": "https://unpkg.com/@viz-js/viz@3.11.0/lib/viz-standalone.mjs",
-		"codejar": "https://unpkg.com/codejar@4.2.0/dist/codejar.js"
-	}
+  "tasks": {
+    "install": "deno install --reload; deno install jsr:@deno/deployctl --allow-import;",
+    "dev": "deno run -A --watch server.ts --watch-ui",
+    "build": "deno run -A jsr:@invisement/husk/transpile-ui",
+    "prod": "deno run -A server.ts",
+    "deploy": "deno task install; deno task build; deployctl deploy --entrypoint=\"deno task prod\" server.ts;",
+    "docs": "deno run -A jsr:@invisement/husk/imports-graph"
+  },
+  "compilerOptions": {
+    "lib": [
+      "dom",
+      "esnext",
+      "dom.iterable",
+      "deno.ns"
+    ]
+  },
+  "fmt": {
+    "useTabs": true,
+    "indentWidth": 4
+  },
+  "imports": {
+    "@deno/deployctl": "jsr:@deno/deployctl@^1.13.0",
+    "@invisement/husk": "jsr:@invisement/husk@^0.4.62",
+    "@invisement/husk/transpile-ui": "jsr:@invisement/husk@^0.4.62/transpile-ui",
+    "@viz-js/viz": "https://unpkg.com/@viz-js/viz@3.11.0/lib/viz-standalone.mjs",
+    "codejar": "https://unpkg.com/codejar@4.2.0/dist/codejar.js"
+  },
+  "deploy": {
+    "project": "363f8cf7-178c-4ead-951b-c89327f51a68",
+    "exclude": [
+      "**/node_modules"
+    ],
+    "include": [],
+    "entrypoint": "server.ts"
+  }
 }

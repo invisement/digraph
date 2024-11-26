@@ -48,16 +48,16 @@ export class DrawGraph extends HTMLElement {
 	oneBigSvg = async (code: string) => {
 		let svg = this.svgString(code);
 
-		const regex = /<image xlink:href="(.*?)" (.*?)\/>/g;
+		const regex = /<image xlink:href="(?<url>.*?)" (?<attributes>.*?)\/>/g;
 
 		const matches = svg.matchAll(regex);
 		console.log("matches", matches);
 
 		const promises = matches.map(async (match) => {
-			let innerSvg = await fetch(match[1]).then((r) => r.text());
+			let innerSvg = await fetch(match.groups!.url).then((r) => r.text());
 			innerSvg = innerSvg.replace(
-				/<svg (.*?)viewBox/g,
-				`<svg ${match[2]} viewBox`,
+				/<svg .*?viewBox="(?<viewbox>.*?)".*?>/g,
+				`<svg viewBox="$<viewbox>" ${match.groups!.attributes}>`,
 			);
 			svg = svg.replace(match[0], innerSvg);
 		});
