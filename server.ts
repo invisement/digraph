@@ -2,11 +2,18 @@ import { Router } from "@invisement/husk";
 
 const router = new Router({});
 
-import { watchUI } from "../husk/utils/transpile-ui.ts";
-import { uiEntrypoints, uiOutDir, uiSourceDir } from "./config.ts";
+import { watchUI } from "@invisement/husk/transpile-ui";
+import {
+	importMapFile,
+	uiEntrypoints,
+	uiOutDir,
+	uiSourceDir,
+} from "./config.ts";
 
 const isDev = Deno.args.includes("--watch-ui");
-const uiDir = isDev ? await watchUI(uiSourceDir, uiEntrypoints) : uiOutDir;
+const uiDir = isDev
+	? await watchUI(uiSourceDir, uiEntrypoints, importMapFile)
+	: uiOutDir;
 console.log("UI OUt Directory is", uiDir);
 
 // Serve ui and static files

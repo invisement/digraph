@@ -9,11 +9,21 @@ export class TopMenu extends HTMLElement {
 
 		shadow.innerHTML = this.html();
 
-		shadow.getElementById("draw")?.addEventListener("click", this.showGraph);
-		shadow.getElementById("open")?.addEventListener("click", this.openGraph);
+		shadow.getElementById("draw")?.addEventListener(
+			"click",
+			this.showGraph,
+		);
+		shadow.getElementById("open")?.addEventListener(
+			"click",
+			this.openGraph,
+		);
 		shadow.getElementById("download")?.addEventListener(
 			"click",
 			this.downloadGraph,
+		);
+		shadow.getElementById("png")?.addEventListener(
+			"click",
+			this.downloadPng,
 		);
 	}
 
@@ -21,6 +31,7 @@ export class TopMenu extends HTMLElement {
 		<span id=draw> Draw </span>
 		<span id=open> Open </span>
 		<span id=download> Download </span>
+		<span id=png> save.png </span>
 		<style>
 		:host {
 			display: flex;
@@ -45,5 +56,9 @@ export class TopMenu extends HTMLElement {
 	downloadGraph = () => {
 		const code = codeEditor!.getCode();
 		graphDrawer!.download(code);
+	};
+	downloadPng = () => {
+		const code = codeEditor!.getCode();
+		graphDrawer!.downloadPng(code);
 	};
 }

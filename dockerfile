@@ -7,6 +7,8 @@ WORKDIR /app
 # Copy the project files to the container
 COPY . .
 
+RUN deno install --allow-import
+
 # Expose the port your application listens on
 EXPOSE 8080
 
