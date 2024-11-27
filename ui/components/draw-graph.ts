@@ -1,4 +1,11 @@
+/**
+ * modification: convert !url to image url in table and out
+ */
+
 import { instance } from "@viz-js/viz";
+
+const rowSeparator = "\n";
+const colSeperator = "|";
 
 const graphViz = await instance();
 type ImageReference = {
@@ -20,11 +27,10 @@ export class DrawGraph extends HTMLElement {
 	}
 
 	private extractImageList = (code: string): ImageReference[] => {
-		const regex = /image="(.*?)"/g; // Matches double-quoted strings
-
 		const images = [];
-		for (const match of code.matchAll(regex)) {
-			console.log(match);
+
+		// for image attribute
+		for (const match of code.matchAll(/image="(.*?)"/g)) {
 			images.push({
 				name: match[1],
 				width: "20mm",
@@ -32,17 +38,66 @@ export class DrawGraph extends HTMLElement {
 			});
 		}
 
-		console.log("images are", images);
+		// for img inside table label
+		for (const match of code.matchAll(/img src="(.*?)"/g)) {
+			images.push({
+				name: match[1],
+				width: "20mm",
+				height: "20mm",
+			});
+		}
+
 		return images;
 	};
 
+	replaceTables = (code: string) => {
+		const labelToTable = (label: string) => {
+			label = label.trim();
+
+			label = label.replaceAll(
+				/!(\/.*?)[^a-zA-Z0-9_\-.:/]/g,
+				`<IMG SRC="$1" />`,
+			);
+
+			const transposeTable: string[][] = label.split(rowSeparator).filter(
+				(x) => x.trim(),
+			).map((
+				row,
+			) => row.split(colSeperator));
+
+			const tableHtml = transposeTable.map((row) =>
+				`<TR>${row.map((cell) => `<TD>${cell.trim()}</TD>`)}</TR>`
+			).join("");
+
+			return `label = < <TABLE> ${tableHtml} </TABLE> >`;
+		};
+
+		const labelsPlus = code.split(/label\s*=\s*\(/);
+		const firstPart = labelsPlus.shift();
+		const transformedCode = labelsPlus.map((labelPlus) => {
+			const [label, plus] = labelPlus.split(")", 2);
+			const table = labelToTable(label);
+			return table + plus;
+		}).join("label = ");
+		return `${firstPart} ${transformedCode}`;
+	};
+
 	svgString = (code: string) => {
+		code = this.replaceTables(code);
+
+		code = code.replaceAll(
+			/!(\/.*?)([^a-zA-Z0-9_\-.:/])/g,
+			`image="$1"$2`,
+		);
+
 		const images = this.extractImageList(code);
 
-		return graphViz.renderString(code, {
+		let svg = graphViz.renderString(code, {
 			format: "svg",
 			images,
 		}) as string;
+
+		return svg;
 	};
 
 	oneBigSvg = async (code: string) => {
@@ -51,20 +106,25 @@ export class DrawGraph extends HTMLElement {
 		const regex = /<image xlink:href="(?<url>.*?)" (?<attributes>.*?)\/>/g;
 
 		const matches = svg.matchAll(regex);
-		console.log("matches", matches);
 
-		const promises = matches.map(async (match) => {
-			let innerSvg = await fetch(match.groups!.url).then((r) => r.text());
-			innerSvg = innerSvg.replace(
-				/<svg .*?viewBox="(?<viewbox>.*?)".*?>/g,
-				`<svg viewBox="$<viewbox>" ${match.groups!.attributes}>`,
+		const innerSvgPromises = matches.map(async (match) => {
+			const url = match.groups!.url;
+			let innerSvg = await fetch(url).then((r) => r.text());
+			svg = svg.replace(
+				match[0],
+				`<use href="#${url}" ${match.groups!.attributes}/>`,
 			);
-			svg = svg.replace(match[0], innerSvg);
+			return innerSvg.replace("<svg ", `<svg id="${url}" `);
+			// innerSvg = innerSvg.replace(
+			// 	/<svg .*?viewBox="(?<viewbox>.*?)".*?>/g,
+			// 	`<svg id="${url}" viewBox="$<viewbox>" ${match.groups!.attributes}>`,
+			// );
+			//svg = svg.replace(match[0], innerSvg);
 		});
 
-		await Promise.all(promises);
+		const defs = (await Promise.all(innerSvgPromises)).join("");
 
-		return svg;
+		return defs + svg;
 
 		//this.shadow.querySelector("div")!.innerHTML = svg;
 	};

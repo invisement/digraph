@@ -55,3 +55,9 @@ It follow DOT language (https://graphviz.com) with following modifications.
 - using icons:
   - node1 [image="/gcp/Cloud-Run.svg"]
   - to find gcp icon name: https://gcpicons.com/
+
+- !/url becomes:
+  - [image="url"] in nodes
+  - <img src="url"> in tables
+
+- [TODO] isolate innerSvg styles from each other (PubSub and Cloud-Run)
