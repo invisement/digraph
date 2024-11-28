@@ -54,10 +54,14 @@ It follow DOT language (https://graphviz.com) with following modifications.
 
 - using icons:
   - node1 [image="/gcp/Cloud-Run.svg"]
+  - You can also use it in table labels.
   - to find gcp icon name: https://gcpicons.com/
 
 - !/url becomes:
   - [image="url"] in nodes
   - <img src="url"> in tables
+  - use this syntax as a sugar coat like !/gcp/Cloud-Run.svg
 
-- [TODO] isolate innerSvg styles from each other (PubSub and Cloud-Run)
+- variables:
+  - definition is !id = `multiline value`
+  - usage is !id which become the value

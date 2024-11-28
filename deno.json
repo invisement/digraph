@@ -8,6 +8,7 @@
 		"docs": "deno run -A jsr:@invisement/husk/imports-graph"
 	},
 	"compilerOptions": {
+		"experimentalDecorators": false,
 		"lib": [
 			"dom",
 			"esnext",
