@@ -7,14 +7,11 @@ export class TopMenu extends HTMLElement {
 	examples: Record<string, string> = {};
 
 	private html = () => /*html*/ `
-		<input id=select-example list=example-list placeholder = "Examples">
+		<select id=select-example placeholder = "Examples"></select>
 		<span id=draw> Draw </span>
 		<span id=open> Open </span>
 		<span id=download> Download </span>
 		<span id=png> save.png </span>
-
-		<datalist id="example-list">
-		</datalist>
 
 		<style>
 			:host {
@@ -61,15 +58,13 @@ export class TopMenu extends HTMLElement {
 	}
 
 	async initialSetup() {
-		const exampleNames = await this.populateDatalist();
+		const exampleNames = await this.populateSelectExamples();
 
-		console.log("inital");
 		const select = this.shadow.getElementById(
 			"select-example",
 		) as HTMLInputElement;
 		select.value = exampleNames[0];
 		select.dispatchEvent(new Event("change"));
-		console.log(exampleNames[0]);
 	}
 
 	showExample = (e: Event) => {
@@ -80,14 +75,14 @@ export class TopMenu extends HTMLElement {
 		this.showGraph();
 	};
 
-	populateDatalist = async () => {
+	populateSelectExamples = async () => {
 		this.examples = await fetch("/examples").then((r) => r.json());
 
 		const exampleNames = Object.keys(this.examples);
 		const options = exampleNames.map((name) =>
 			`<option id=${name}>${name}</option>`
 		).join("\n");
-		this.shadow.getElementById("example-list")!.innerHTML = options;
+		this.shadow.getElementById("select-example")!.innerHTML = options;
 
 		return exampleNames;
 	};

@@ -4,9 +4,10 @@ export class CodeToDot {
 	rowSeparator = "\n";
 	colSeparator = "|";
 	urlRegex = /!(\/.*?)(?=[,;}\s\)\]])/gm;
-	idRegex = "(?<id>\w+)";
+	idRegex = "(?<id>!\\w+)";
 	equalRegex = "[ ]*=[ ]*";
 	valueRegex = "`(?<value>.*?)`";
+	cellPortRegex = /<(\w+)>/;
 
 	public convert(code: Code): Code {
 		code = this.findAndReplaceVariables(code);
@@ -19,13 +20,11 @@ export class CodeToDot {
 
 	private findAndReplaceVariables(code: Code): Code {
 		const parts = code.split(
-			/(?<id>!\w+)[ ]*=[ ]*`(?<value>.*?)`/gs,
-			// new RegExp(
-			// 	"!" + this.idRegex + this.equalRegex + this.valueRegex,
-			// 	"gs",
-			// ),
+			new RegExp(
+				this.idRegex + this.equalRegex + this.valueRegex,
+				"gs",
+			),
 		);
-		console.log("parts are", parts);
 		const partitions = Object.groupBy(parts, (_, i) => i % 3);
 		const texts = partitions[0] || [];
 		const ids = partitions[1] || [];
@@ -65,6 +64,13 @@ export class CodeToDot {
 	}
 
 	private labelToTable = (label: string) => {
+		const cellPort = (cell: string) => {
+			const parts = cell.split(this.cellPortRegex);
+			const port = parts.splice(1, 1).at(0);
+			cell = parts.join("").trim();
+			return [cell, port];
+		};
+
 		console.log("table label is", label);
 		label = this.imageUrlConvertInsideTable(label);
 		console.log("table label after !/url", label);
@@ -79,7 +85,14 @@ export class CodeToDot {
 			) => row.split(this.colSeparator));
 
 		const tableHtml = transposeTable.map((row) =>
-			`<TR>${row.map((cell) => `<TD>${cell.trim()}</TD>`).join("")}</TR>`
+			`<TR>${
+				row.map((cell) => {
+					const [trimCell, port] = cellPort(cell);
+					return port
+						? `<TD port="${port}">${trimCell}</TD>`
+						: `<TD>${trimCell}</TD>`;
+				}).join("")
+			}</TR>`
 		).join("");
 
 		return `label = < <TABLE> ${tableHtml} </TABLE> >`;

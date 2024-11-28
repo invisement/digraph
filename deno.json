@@ -5,7 +5,7 @@
 		"build": "deno run -A jsr:@invisement/husk/transpile-ui",
 		"prod": "deno run -A server.ts",
 		"deploy": "deno task install; deno task build; deployctl deploy --prod --entrypoint=\"deno task prod\" server.ts;",
-		"docs": "deno run -A jsr:@invisement/husk/imports-graph"
+		"docs": "deno run -A jsr:@invisement/husk/imports-graph > docs/imports-graph.svg"
 	},
 	"compilerOptions": {
 		"experimentalDecorators": false,

@@ -9,6 +9,7 @@
 - [ ] in () => table, maybe to have ()() like record shape.
 - [ ] change image size to 2mm and use imagescale
 - [x] isolate innerSvg styles from each other (PubSub and Cloud-Run)
+- [x] change select-example <input> to <select>
 
 ## features
 
@@ -17,3 +18,9 @@
 - [ ] adding classes
 - [x] variables
 - [ ] themes
+- [ ] ports for table <port>
+- [ ] parental arrows lhead = _ or ltail = _
+- [ ] class (a.b)
+- [ ] table attributes ().`attributes`
+- [ ] theme through subgraph theme_x
+- [ ] import through !import
