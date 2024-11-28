@@ -1,7 +1,4 @@
-import { Router } from "@invisement/husk";
-
-const router = new Router({});
-
+import { router } from "./api/router.ts";
 import { watchUI } from "@invisement/husk/transpile-ui";
 import {
 	importMapFile,

@@ -1,4 +1,4 @@
-export const nodeImageInput = `
+export const nodeImage = `
 digraph {
 	a -> b -> c
 	a [ !/gcp/PubSub.svg ]

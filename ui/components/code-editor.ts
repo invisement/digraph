@@ -17,10 +17,16 @@ export class CodeEditor extends HTMLElement {
 
 		const shadow = this.attachShadow({ mode: "open" });
 		shadow.innerHTML = this.html;
-		this.editor = CodeJar(shadow.querySelector("#editor"), (x: string) => x);
+		this.editor = CodeJar(
+			shadow.querySelector("#editor"),
+			(x: string) => x,
+		);
 	}
 
 	getCode = () => {
 		return this.editor.toString();
+	};
+	setCode = (code: string) => {
+		this.editor.updateCode(code);
 	};
 }
