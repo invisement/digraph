@@ -1,25 +1,24 @@
-import type { Code } from "./interface.ts";
+import type { Dot, Sugar } from "./interface.ts";
 
-export class CodeToDot {
-	rowSeparator = "\n";
-	colSeparator = "|";
-	urlRegex = /!(\/.*?)(?=[,;}\s\)\]])/gm;
-	idRegex = "(?<id>!\\w+)";
-	equalRegex = "[ ]*=[ ]*";
-	valueRegex = "`(?<value>.*?)`";
-	cellPortRegex = /<(\w+)>/;
+export class DotSugar implements Sugar<Dot> {
+	private rowSeparator = "\n";
+	private colSeparator = "|";
+	private urlRegex = /!(\/.*?)(?=[,;}\s\)\]])/gm;
+	private idRegex = "(?<id>!\\w+)";
+	private equalRegex = "[ ]*=[ ]*";
+	private valueRegex = "`(?<value>.*?)`";
+	private cellPortRegex = /<(\w+)>/;
 
-	public convert(code: Code): Code {
-		code = this.findAndReplaceVariables(code);
+	public unCoat(dot: Dot): Dot {
+		dot = this.findAndReplaceVariables(dot);
 
-		code = this.replaceTables(code);
-		code = this.urlImages(code);
-		console.log("pure dot:", code);
-		return code;
+		dot = this.replaceTables(dot);
+		dot = this.urlImages(dot);
+		return dot;
 	}
 
-	private findAndReplaceVariables(code: Code): Code {
-		const parts = code.split(
+	private findAndReplaceVariables(dot: Dot): Dot {
+		const parts = dot.split(
 			new RegExp(
 				this.idRegex + this.equalRegex + this.valueRegex,
 				"gs",
@@ -37,20 +36,20 @@ export class CodeToDot {
 			keyValues[ids[i]] = values[i];
 		}
 
-		code = texts?.join("");
-		code = this.replaceVariables(code, keyValues);
-		return code;
+		dot = texts?.join("");
+		dot = this.replaceVariables(dot, keyValues);
+		return dot;
 	}
 
-	replaceVariables(code: Code, keyValues: Record<string, string>) {
+	private replaceVariables(dot: Dot, keyValues: Record<string, string>) {
 		for (const [id, value] of Object.entries(keyValues)) {
-			code = code.replaceAll(id, value);
+			dot = dot.replaceAll(id, value);
 		}
-		return code;
+		return dot;
 	}
 
-	private urlImages(code: Code) {
-		return code.replaceAll(
+	private urlImages(dot: Dot) {
+		return dot.replaceAll(
 			this.urlRegex,
 			`image="$1"`,
 		);
@@ -71,10 +70,7 @@ export class CodeToDot {
 			return [cell, port];
 		};
 
-		console.log("table label is", label);
 		label = this.imageUrlConvertInsideTable(label);
-		console.log("table label after !/url", label);
-
 		label = label.trim();
 
 		const transposeTable: string[][] = label.split(this.rowSeparator)
@@ -95,11 +91,11 @@ export class CodeToDot {
 			}</TR>`
 		).join("");
 
-		return `label = < <TABLE> ${tableHtml} </TABLE> >`;
+		return `label = < <TABLE border=0> ${tableHtml} </TABLE> >`;
 	};
 
-	private replaceTables = (code: string): string => {
-		const labelsPlus = code.split(/label\s*=\s*\(/);
+	private replaceTables = (dot: string): string => {
+		const labelsPlus = dot.split(/label\s*=\s*\(/);
 		const firstPart = labelsPlus.shift();
 		const transformedCode = labelsPlus.map((labelPlus) => {
 			const [label, plus] = labelPlus.split(")", 2);

@@ -1,15 +1,22 @@
-import { DotToSVG } from "./dot-to-svg.ts";
-import { CodeToDot } from "./code-to-dot.ts";
+import { GraphViz } from "./graph-viz.ts";
+import { DotSugar } from "./dot-sugar.ts";
+import { JsonSugar } from "./json-sugar.ts";
 
-const codeToDot = new CodeToDot();
-const dotToSvg = new DotToSVG();
+const dotSugar = new DotSugar();
+const jsonSugar = new JsonSugar();
+const graphViz = new GraphViz();
 
 import { Code, CodeToSvgConvertor, Svg } from "./interface.ts";
 
 export class CodeToSVG implements CodeToSvgConvertor {
 	public toShow(code: Code): Svg {
-		const dot = codeToDot.convert(code);
-		const svg = dotToSvg.svgString(dot);
+		const dot = dotSugar.unCoat(code);
+		console.log("modified dot is", dot);
+		let json = graphViz.dotToJson(dot);
+		console.log("json is", json);
+		//json = jsonSugar.unCoat(json);
+		const svg = graphViz.jsonToSvg(json);
+		console.log("svg string is", svg);
 		return svg;
 	}
 
@@ -18,7 +25,7 @@ export class CodeToSVG implements CodeToSvgConvertor {
 		return await this.sprite(svg);
 	}
 
-	/** Downloads all innerSvgs and creates one big svg, mainly for downloading*/
+	/** Downloads all innerSVGs and creates one big svg, mainly for downloading*/
 	private sprite = async (svg: Svg): Promise<Svg> => {
 		//let svg = this.svgString(code);
 		const imageUrls = new Set<string>();

@@ -20,3 +20,15 @@ digraph {
 
 }
 `;
+
+export const recordAndTable = `
+	digraph structs {
+		node [shape=record];
+
+		a [label="<por0> left | middle | <port1> right"];
+		b [label="<port2> one | two"];
+		c [label="hello \n world | { b |{c | <port3> d|e}| f}| g | h"];
+		
+		a:port1 -> b:port2 -> c:port3;
+	}
+`;

@@ -1,0 +1,3 @@
+[submodule "viz-js"]
+	path = viz-js
+	url = git@github.com:mdaines/viz-js.git
