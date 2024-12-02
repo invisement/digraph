@@ -92,9 +92,9 @@ digraph {
 	YourSolution[shape=box3d style=filled fillcolor=lightblue]
 	
 }
-`
+`;
 
-const gcpArch = `
+export const gcpArch = `
 strict digraph {
     graph [compound=true, concentrate=true, rankdir=LR, color="#8888ff", fontcolor=blue] //concentrate=true,clusterrank=none     
 	node[color="#ccccff", shape=box3d style=filled fillcolor=white fixedsize=true width=1.3 height=1.1 imagepos=tc labelloc=b fontsize=14]     
@@ -235,4 +235,4 @@ strict digraph {
     
 
 }
-`
+`;
