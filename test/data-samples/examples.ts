@@ -1,8 +1,36 @@
-export const nodeImage = `
+export const tutorial = `
 digraph {
-	a -> b -> c
-	a [ !/gcp/PubSub.svg ]
-	c[!/gcp/Cloud-Run.svg]
+
+graph[rankdir=LR color=green]
+node[shape=box color=blue fontsize=18]
+edge[dir=back color=red]
+
+
+
+a -> b:port1 -> c:port2;
+
+subgraph cluster_x {
+	label="hello you"
+	
+	a
+	b
+}
+
+
+a [ label=(!/gcp/Cloud-Run.svg \n Cloud Run) ]
+
+b [label="hello world | { <port1> x |{y1 | y2 | y3}| z}" shape=record]
+
+
+c [label=(
+
+tableX |	 | !/gcp/Cloud-Run.svg
+<port2> primaryKey | ID | string
+person full name | name | string
+
+)]
+
+
 }
 `;
 
@@ -19,16 +47,4 @@ digraph {
 	b [shape=record label="hello |{ b |{c|<here> d|e}| f}| g" color=red ];
 
 }
-`;
-
-export const recordAndTable = `
-	digraph structs {
-		node [shape=record];
-
-		a [label="<por0> left | middle | <port1> right"];
-		b [label="<port2> one | two"];
-		c [label="hello \n world | { b |{c | <port3> d|e}| f}| g | h"];
-		
-		a:port1 -> b:port2 -> c:port3;
-	}
 `;

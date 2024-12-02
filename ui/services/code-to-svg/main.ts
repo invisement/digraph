@@ -1,9 +1,9 @@
 import { GraphViz } from "./graph-viz.ts";
 import { DotSugar } from "./dot-sugar.ts";
-import { JsonSugar } from "./json-sugar.ts";
+//import { JsonSugar } from "./json-sugar.ts";
 
 const dotSugar = new DotSugar();
-const jsonSugar = new JsonSugar();
+//const jsonSugar = new JsonSugar();
 const graphViz = new GraphViz();
 
 import { Code, CodeToSvgConvertor, Svg } from "./interface.ts";
@@ -11,12 +11,8 @@ import { Code, CodeToSvgConvertor, Svg } from "./interface.ts";
 export class CodeToSVG implements CodeToSvgConvertor {
 	public toShow(code: Code): Svg {
 		const dot = dotSugar.unCoat(code);
-		console.log("modified dot is", dot);
-		let json = graphViz.dotToJson(dot);
-		console.log("json is", json);
-		//json = jsonSugar.unCoat(json);
-		const svg = graphViz.jsonToSvg(json);
-		console.log("svg string is", svg);
+		const graph = graphViz.dotToGraph(dot);
+		const svg = graphViz.graphToSvg(graph);
 		return svg;
 	}
 

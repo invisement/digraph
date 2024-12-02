@@ -1,18 +1,19 @@
 import type { Dot, Sugar } from "./interface.ts";
 
 export class DotSugar implements Sugar<Dot> {
-	private rowSeparator = "\n";
+	private rowSeparator = /\n|\\n/;
 	private colSeparator = "|";
 	private urlRegex = /!(\/.*?)(?=[,;}\s\)\]])/gm;
 	private idRegex = "(?<id>!\\w+)";
 	private equalRegex = "[ ]*=[ ]*";
 	private valueRegex = "`(?<value>.*?)`";
 	private cellPortRegex = /<(\w+)>/;
+	private tableRegex = /label\s*=\s*\((?<tableLabel>.*?)\)/gs;
 
 	public unCoat(dot: Dot): Dot {
 		dot = this.findAndReplaceVariables(dot);
 
-		dot = this.replaceTables(dot);
+		dot = this.findAndReplaceTables(dot);
 		dot = this.urlImages(dot);
 		return dot;
 	}
@@ -80,29 +81,37 @@ export class DotSugar implements Sugar<Dot> {
 				row,
 			) => row.split(this.colSeparator));
 
+		let colspan = 1;
 		const tableHtml = transposeTable.map((row) =>
 			`<TR>${
 				row.map((cell) => {
 					const [trimCell, port] = cellPort(cell);
-					return port
-						? `<TD port="${port}">${trimCell}</TD>`
-						: `<TD>${trimCell}</TD>`;
+					if (!trimCell) {
+						colspan += 1;
+						return "";
+					}
+
+					const colspanText = colspan > 1
+						? `colspan="${colspan}"`
+						: "";
+					const portText = port ? `port="${port}"` : "";
+					colspan = 1;
+
+					return `<TD ${portText} ${colspanText}>${trimCell}</TD>`;
 				}).join("")
 			}</TR>`
 		).join("");
 
-		return `label = < <TABLE border=0> ${tableHtml} </TABLE> >`;
+		return `label = < <TABLE cellspacing="0"> ${tableHtml} </TABLE> > shape="none"`;
 	};
 
-	private replaceTables = (dot: string): string => {
-		const labelsPlus = dot.split(/label\s*=\s*\(/);
-		const firstPart = labelsPlus.shift();
-		const transformedCode = labelsPlus.map((labelPlus) => {
-			const [label, plus] = labelPlus.split(")", 2);
-			const table = this.labelToTable(label);
-			return table + plus;
-		}).join("label = ");
+	private findAndReplaceTables = (dot: string): string => {
+		const parts = dot.split(this.tableRegex);
 
-		return `${firstPart} ${transformedCode}`;
+		// every other (evens) are table labels
+		for (let i = 1; i < parts.length; i += 2) {
+			parts[i] = this.labelToTable(parts[i]);
+		}
+		return parts.join("");
 	};
 }

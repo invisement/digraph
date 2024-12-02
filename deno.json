@@ -21,6 +21,8 @@
 		"indentWidth": 4
 	},
 	"imports": {
+		"viz/types": "./viz-js/packages/viz/types/index.d.ts",
+
 		"@deno/deployctl": "jsr:@deno/deployctl@^1.13.0",
 		"@invisement/husk": "jsr:@invisement/husk@^0.4.62",
 		"@invisement/husk/transpile-ui": "jsr:@invisement/husk@^0.4.62/transpile-ui",

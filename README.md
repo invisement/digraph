@@ -65,3 +65,11 @@ It follow DOT language (https://graphviz.com) with following modifications.
 - variables:
   - definition is !id = `multiline value`
   - usage is !id which become the value
+
+- using table
+  - node [label = (col1 | <port1> col2 \n !/gcp/Cloud-Run.svg)]
+  - use new line (or \n) for next row.
+  - use <port> to create port: a -> myTable:port2
+
+- ## using record
+  - [label = " x | {y1 | y2} | z " shape=record]

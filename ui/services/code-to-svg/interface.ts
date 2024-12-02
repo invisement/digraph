@@ -1,3 +1,5 @@
+import { Graph } from "viz/types";
+
 export type Code = string;
 export type Svg = string;
 export type Dot = string;
@@ -9,8 +11,8 @@ export interface CodeToSvgConvertor {
 }
 
 export interface GraphVizInterface {
-	dotToJson(dot: Dot): Json;
-	jsonToSvg(json: Json): Svg;
+	dotToGraph(dot: Dot): Graph;
+	graphToSvg(graph: Graph): Svg;
 }
 
 /** for unCoating sugar coated stuff */
