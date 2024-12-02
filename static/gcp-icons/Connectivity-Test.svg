@@ -1,3 +1,6 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:54266612dd0d07eb02be8466ae6da2fc4b59282430a60795eadb2d78cb57d70a
-size 453
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <polyline id="Stroke-1" stroke="#4285F4" stroke-width="2" points="20 4 4 13 4 6.71740939"></polyline>
+        <polyline id="Stroke-3" stroke="#4285F4" stroke-width="2" points="4 21 20 12 20 18.2825906"></polyline>
+    </g>
+</svg>
