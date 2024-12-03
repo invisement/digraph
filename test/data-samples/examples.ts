@@ -5,8 +5,6 @@ graph[rankdir=LR color=green]
 node[shape=box color=blue fontsize=18]
 edge[dir=back color=red]
 
-
-
 a -> b:port1 -> c:port2;
 
 subgraph cluster_x {
@@ -17,22 +15,24 @@ subgraph cluster_x {
 }
 
 
-a [ label=(!/gcp/Cloud-Run.svg \n Cloud Run) ]
+a [ label=(!/gcp/Cloud-Run.svg 
+ Cloud Run) ]
 
-b [label="hello world | { <port1> x |{y1 | y2 | y3}| z}" shape=record]
+b [label=<hello world | { <port1> x |{y1| y2 | y3}| z}> shape=record]
+
 
 
 c [label=(
 
-tableX |	 | !/gcp/Cloud-Run.svg
+	|	| <font point-size="28" color="green"> Table Header </font> \`bgcolor="#bbbbff55"\`
+tableX |	 | !/gcp/Cloud-Run.svg 
 <port2> primaryKey | ID | string
 person full name | name | string
 
 )]
 
 
-}
-`;
+}`;
 
 export const tableRecordVariable = `
 digraph {

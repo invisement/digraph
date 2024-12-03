@@ -8,6 +8,8 @@ export class DotSugar implements Sugar<Dot> {
 	private equalRegex = "[ ]*=[ ]*";
 	private valueRegex = "`(?<value>.*?)`";
 	private cellPortRegex = /<(\w+)>/;
+	private cellStyleRegex = /`(.*?)`/;
+	private tableStyleRegex = /^\s*`(.*?)`/;
 	private tableRegex = /label\s*=\s*\((?<tableLabel>.*?)\)/gs;
 
 	public unCoat(dot: Dot): Dot {
@@ -64,28 +66,43 @@ export class DotSugar implements Sugar<Dot> {
 	}
 
 	private labelToTable = (label: string) => {
-		const cellPort = (cell: string) => {
+		const cellPort = (cell: string): [string, string] => {
 			const parts = cell.split(this.cellPortRegex);
-			const port = parts.splice(1, 1).at(0);
+			const port = parts.splice(1, 1).at(0) || "";
 			cell = parts.join("").trim();
 			return [cell, port];
 		};
 
-		label = this.imageUrlConvertInsideTable(label);
-		label = label.trim();
+		const cellStyle = (cell: string): [string, string] => {
+			const parts = cell.split(this.cellStyleRegex);
+			const style = parts.splice(1, 1).at(0) || "";
+			cell = parts.join("").trim();
+			return [cell, style];
+		};
 
-		const transposeTable: string[][] = label.split(this.rowSeparator)
+		const tableStyle = (table: string): [string, string] => {
+			const parts = table.split(this.tableStyleRegex);
+			const style = parts.splice(1, 1).at(0) || "";
+			table = parts.join("").trim();
+			return [table, style];
+		};
+
+		label = this.imageUrlConvertInsideTable(label);
+		let [tableString, tStyle] = tableStyle(label);
+
+		const table: string[][] = tableString.split(this.rowSeparator)
 			.filter(
 				(x) => x.trim(),
 			).map((
 				row,
 			) => row.split(this.colSeparator));
 
-		let colspan = 1;
-		const tableHtml = transposeTable.map((row) =>
-			`<TR>${
+		const tableHtml = table.map((row) => {
+			let colspan = 1;
+			return `<TR>${
 				row.map((cell) => {
-					const [trimCell, port] = cellPort(cell);
+					const [cell2, style] = cellStyle(cell);
+					const [trimCell, port] = cellPort(cell2 || "");
 					if (!trimCell) {
 						colspan += 1;
 						return "";
@@ -97,12 +114,14 @@ export class DotSugar implements Sugar<Dot> {
 					const portText = port ? `port="${port}"` : "";
 					colspan = 1;
 
-					return `<TD ${portText} ${colspanText}>${trimCell}</TD>`;
+					return `<TD ${portText} ${colspanText} ${style}>${trimCell}</TD>`;
 				}).join("")
-			}</TR>`
-		).join("");
+			}</TR>`;
+		}).join("");
 
-		return `label = < <TABLE cellspacing="0"> ${tableHtml} </TABLE> > shape="none"`;
+		console.log("table style", tStyle);
+
+		return `label = < <TABLE cellspacing="0" ${tStyle}> ${tableHtml} </TABLE> > shape="none"`;
 	};
 
 	private findAndReplaceTables = (dot: string): string => {

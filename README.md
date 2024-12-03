@@ -70,6 +70,8 @@ It follow DOT language (https://graphviz.com) with following modifications.
   - node [label = (col1 | <port1> col2 \n !/gcp/Cloud-Run.svg)]
   - use new line (or \n) for next row.
   - use <port> to create port: a -> myTable:port2
+  - use `bgcolor="green"` for style (inside cell to style a cell or beginning of
+    table to style table)
 
 - ## using record
   - [label = " x | {y1 | y2} | z " shape=record]

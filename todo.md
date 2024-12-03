@@ -11,6 +11,11 @@
 - [ ] change image size to 2mm and use imagescale
 - [x] isolate innerSvg styles from each other (PubSub and Cloud-Run)
 - [x] change select-example <input> to <select>
+- [x] colspan flows to the next row
+- [x] create rowspan based on "_ |"
+  - NO, it is difficult
+- [x] add table style for header (bold background)
+  - through `bgcolor="green"` in cell or table
 
 ## investigate
 
