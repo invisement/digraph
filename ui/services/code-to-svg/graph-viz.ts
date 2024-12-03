@@ -165,7 +165,7 @@ export class GraphViz implements GraphVizInterface {
 		}
 
 		// for img inside table label
-		for (const match of dot.matchAll(/img src="(.*?)"/g)) {
+		for (const match of dot.matchAll(/IMG SRC="(.*?)"/g)) {
 			images.push({
 				name: match[1],
 				width: "20mm",

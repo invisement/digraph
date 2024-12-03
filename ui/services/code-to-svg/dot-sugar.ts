@@ -119,8 +119,6 @@ export class DotSugar implements Sugar<Dot> {
 			}</TR>`;
 		}).join("");
 
-		console.log("table style", tStyle);
-
 		return `label = < <TABLE cellspacing="0" ${tStyle}> ${tableHtml} </TABLE> > shape="none"`;
 	};
 
