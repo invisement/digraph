@@ -96,143 +96,189 @@ digraph {
 
 export const gcpArch = `
 strict digraph {
-    graph [compound=true, concentrate=true, rankdir=LR, color="#8888ff", fontcolor=blue] //concentrate=true,clusterrank=none     
-	node[color="#ccccff", shape=box3d style=filled fillcolor=white fixedsize=true width=1.3 height=1.1 imagepos=tc labelloc=b fontsize=14]     
+    graph [compound=true, concentrate=true, rankdir=LR, color="#8888ff", fontcolor=blue] // clusterrank=none     
+	node[color="#ccccff", shape=box3d imagepos=tc fontsize=12 labelloc=c]     
 	edge[color=blue, labelfloat=true, fontsize=12, fontcolor=brown tailport=e headport=w weight=1]
 
 
     // style for label nodes   
     {
         node[shape=none fillcolor=none margin=0 fontsize=10 fontcolor=blue labelloc=c]
-        FeatureEngineering 
-        OIDC
-        ModelTraining
+        
     }
     
     // database style
     {
         node[shape=cylinder image="/gcp/BigQuery.svg"]
-        ModelRegistry [image="/gcp/Container-Registry.svg"]
-        FeatureStore [image="/gcp/Datastore.svg"]
     }
     
-    
-    // subgraphs
-    subgraph cluster_AWSDataSources {
-        label="1-Data Sources"
-        node[shape=cylinder image="/gcp/BigQuery.svg" ]
-        
-        
-        TransactionData
-        PromoCalendarData
-        MarketSpecificData
-        TransMap
-        ClickStreamData
+    // event manager style
+    {
+    	node[style=filled fillcolor="#eeeeff" shape=oval]
+    	
+    	GCPScheduler
     }
     
+            
+    
+   	ExternalData[shape=cylinder]
 
-    subgraph cluster_Migration {
-        label="2,3-Data Ingestion and Migration"
+        ETL[label=(
+        		| GCP ETL Tools
+        	!/gcp/Data-Transfer.svg | BigQuery <br/> Data Transfer
+        	 !/gcp/Dataflow.svg | GCP Dataflow
+        	 !/gcp/Dataproc.svg | DataProc
+        
+        ) shape=rarrow margin=".3,.1" labelloc=c]
+        
 
-        transfer[label="BigQuery Data Transfer Service" image="/gcp/Data-Transfer.svg"]
-        dataflow[label="GCP Dataflow" image="/gcp/Dataflow.svg"]
-    }
-
-    subgraph cluster_DataDomain {
-        label="4-AI/ML Data Domain"
-        node[shape=cylinder]
+        DataWarehouse [label = (
+        	
+        		| DataWarehouse
+       		!/gcp/BigQuery.svg | BigQuery
+        	| TransactionData
+        	| PromoCalendarData
+        	| MarketSpecificData
+        	| TransMap
+        	| ClickStreamData
+        	| -
+        	!/gcp/Cloud-Storage.svg | Cloud Storage
+        	| Unstructured Data
+        )]
+        
 
         
-        bigquery[label="BigQuery DataWarehouse" image="/gcp/BigQuery.svg"]
-        storage[label="Cloud Storage DataLake" image="/gcp/Cloud-Storage.svg"]
-    }
+        
+        VertexTools [label=(
+        	
+        	AutoML | !/gcp/AutoML.svg
+       		Gemini | !/gcp/AI-Hub.svg
+        	ModelGarden | !/gcp/AI-Hub.svg
+        	XAI | !/gcp/Datalab.svg
+        )]
+        
+       //Workbench [label = (!/gcp/Vertex-AI.svg \n WorkBench)]
+        
+        Modeling [label=( 
+        	| 	| Modeling in Benchwork
+        !/gcp/Datastream.svg | !/gcp/Datastore.svg | !/gcp/Container-Registry.svg  
+        Vertex AI Pipelines | Feature Store | Model Registry
+        
+        )]
+        
+        CICD [label = (
+        		|	| 	|	CI/CD
+        	!/gcp/Vertex-AI.svg	| !/gcp/Vertex-AI.svg | !/gcp/Cloud-Build.svg | !/gcp/Artifact-Registry.svg
+        	GitHub | Actions | Cloud Build | Artifact Registry
+        ) shape=rarrow margin=".2,.2"]
+        
+                Runner [label = (
+        		| Model Executor
+        	VertexEndpoint | !/gcp/Cloud-Endpoints.svg
+        	Cloud Run | !/gcp/Cloud-Run.svg
+        	GKE | !/gcp/Google-Kubernetes-Engine.svg 
+        	Cloud Functions | !/gcp/Cloud-Functions.svg 
+        )]
+        
+        Gateway [label = (
+        		| 	| API Management
+        	APIGateway | APIgee | LoadBalancer
+        	!/gcp/Cloud-API-Gateway.svg | !/gcp/Apigee-API-Platform.svg | !/gcp/Cloud-Load-Balancing.svg
+        ) shape=rarrow margin=".2,.2"]
+        
+
+	Auth[label=(
+		| Auth Providers
+	WorkSpace | !/gcp/Workload-Identity-Pool.svg
+	Okta | !/gcp/Identity-Platform.svg
+	AuthO | !/gcp/Identity-Aware-Proxy.svg
+	ActiveDirectory | !/gcp/Managed-Service-For-Microsoft-Active-Directory.svg
+
+ 	)]
+
+IAM[label=(!/gcp/Identity-And-Access-Management.svg \n IAM)]
+         
+Security [label = (
+ 	| <port>Security
+Cloud Armor | !/gcp/Cloud-Armor.svg
+VPC | !/gcp/My-Cloud.svg
+Loss Prevention | !/gcp/Data-Loss-Prevention-API.svg
+Key Management | !/gcp/Key-Management-Service.svg
+Command Center | !/gcp/Security-Command-Center.svg
+Cloud Audit | !/gcp/Cloud-Audit-Logs.svg
+
+
+)]
+
+Monitoring [label = (
+	!/gcp/Visual-Inspection.svg | | Model Monitoring
+	PubSub | Cloud Functions | Looker
+	
+)]
+
+
+Workbench [label = (
+	!/gcp/Vertex-AI.svg  | Workbench | Python
+	| | Data Exploration
+	| | Model Selection
+	| | FeatureEngineering 
+	| | Training 
+	| | Test 
+)]
+
+UI [label=(
+	| Service Consumers
+	!/gcp/Angular.svg | Angular
+	!/gcp/Cloud-For-Marketing.svg | React
+	!/gcp/Google-Cloud-Marketplace.svg | Applications
+	!/gcp/Partner-Portal.svg | Vendors
+)]
+	 
+
+subgraph cluster_DataDomain {
+        label="ETL"
+
+        
+        
+}
     
     subgraph cluster_VertexAI {
         label="5-VertexAI"
-
-
-        Pipeline -> FeatureEngineering -> FeatureStore -> ModelTraining -> ModelRegistry
-        {ModelGarden XAI AutoML Gemini} -> Workbench:w 
-        Workbench -> ModelTraining
-        Workbench -> "Vertex AI Model Monitoring"
-        
-
-        Pipeline[label="Vertex AI Pipelines" image="/gcp/Datastream.svg"]
-        
-        
-        AutoML [image="/gcp/AutoML.svg"]
-        Gemini [image="/gcp/AI-Hub.svg"]
-        ModelGarden [image="/gcp/AI-Hub.svg"]
-        XAI [image="/gcp/Datalab.svg"]
-        Workbench [image="/gcp/Vertex-AI.svg"]
-        "Vertex AI Model Monitoring" [image="/gcp/Visual-Inspection.svg"]
         
     }
     
     subgraph cluster_Prediction {
         label="6-Prediction/Inference"
 
-        {VertexEndpoint CloudRun} -> {APIGateway PubSub}
-        APIGateway -> LoadBalancer
-        
-        CloudRun [image="/gcp/Cloud-Run.svg"]
-        VertexEndpoint [image="/gcp/Cloud-Endpoints.svg"]
-        PubSub[image="/gcp/PubSub.svg"]
-        APIGateway [image="/gcp/Cloud-API-Gateway.svg"]
-        LoadBalancer [image="/gcp/Cloud-Load-Balancing.svg"]
     }
     
+    
+
     subgraph cluster_Authentication {
         label="7-GCP IdPs for SSO Authentication"
         
-        {GoogleWorkspace AzureActiveDirectory AuthO Okta} -> OIDC -> IAM
-        IAM[label="IAM Authorization"]
-        
-        Okta [image="/gcp/Identity-Platform.svg"]
-        IAM [image="/gcp/Identity-And-Access-Management.svg"]
-        AuthO [image="/gcp/Identity-Aware-Proxy.svg"]
-        AzureActiveDirectory [image="/gcp/Managed-Service-For-Microsoft-Active-Directory.svg"]
-        GoogleWorkspace [image="/gcp/Workload-Identity-Pool.svg"]
+
     }
 
-    
-    subgraph cluster_FrontEnd {
-        label="8-FrontEnd App"
-        Angular [image="/gcp/My-Cloud.svg"]
         
-    }
-    
-    subgraph cluster_Security {
-        edge[style=invis]
-        label="Security"
-        VPC -> SecurityCommandCenter -> DataLossPrevention -> CloudArmor -> KeyManagementService -> CloudAudit
         
-        CloudArmor [image="/gcp/Cloud-Armor.svg"]
-        VPC [image="/gcp/My-Cloud.svg"]
-        DataLossPrevention [image="/gcp/Data-Loss-Prevention-API.svg"]
-        CloudAudit [image="/gcp/My-Cloud.svg"]
-        KeyManagementService [image="/gcp/Key-Management-Service.svg"]
-        CloudAudit [image="/gcp/Cloud-Audit-Logs.svg"]
-        SecurityCommandCenter [image="/gcp/Security-Command-Center.svg"]
-    }
     
 
 
     
     
-    edge[minlen=2]
-    TransactionData -> transfer [ltail=cluster_AWSDataSources lhead=cluster_Migration]
-    transfer -> bigquery [ltail=cluster_Migration lhead=cluster_DataDomain]
-    bigquery -> Pipeline [ltail=cluster_DataDomain lhead=cluster_VertexAI]
-    ModelRegistry -> VertexEndpoint [ltail=cluster_VertexAI lhead=cluster_Prediction]
-    LoadBalancer -> Angular [ltail=cluster_Prediction lhead=cluster_FrontEnd]
+   
+    ExternalData -> ETL -> DataWarehouse
+    VertexTools -> Workbench -> Modeling -> CICD -> Runner
+    DataWarehouse -> Modeling
 
-    VPC:w -> Pipeline:n [lhead=cluster_VertexAI ltail=cluster_Security weight=0.1]
-    CloudAudit -> LoadBalancer:s [lhead=cluster_Prediction ltail=cluster_Security weight=0.1]
-    IAM -> LoadBalancer:n [ltail=cluster_Authentication lhead=cluster_Prediction weight=0.1]
+    Auth -> IAM
+    
+    {Runner IAM Security} -> Gateway -> UI
+    Runner -> Monitoring
+    GCPScheduler -> ETL:n [style=dashed]
+
+
     
 
-    
-
-}
-`;
+}`;
