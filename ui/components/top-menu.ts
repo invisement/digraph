@@ -1,4 +1,5 @@
 import { codeEditor, graphDrawer } from "../index.ts";
+import { readFile } from "../index.ts";
 
 export class TopMenu extends HTMLElement {
 	//static observedAttributes = [];
@@ -11,7 +12,12 @@ export class TopMenu extends HTMLElement {
 		<span id=draw> Draw </span>
 		<span id=open> Open </span>
 		<span id=download> Download </span>
-		<span id=png> save.png </span>
+		<span id=png> Save.png </span>
+		<span id=dot> DOT </span>
+		<span id=json> JSON </span>
+		<span id="select-file">Select File</span>
+		<span id="draw-file">Draw File </span>
+
 
 		<style>
 			:host {
@@ -54,6 +60,30 @@ export class TopMenu extends HTMLElement {
 		this.shadow.getElementById("select-example")?.addEventListener(
 			"change",
 			this.showExample,
+		);
+		this.shadow.getElementById("dot")?.addEventListener(
+			"click",
+			this.showDOT,
+		);
+		this.shadow.getElementById("json")?.addEventListener(
+			"click",
+			() => graphDrawer.showJSON(),
+		);
+
+		this.shadow.getElementById("select-file")?.addEventListener(
+			"click",
+			async () => {
+				const code = await readFile.selectFile();
+				codeEditor.style.display = "none";
+				graphDrawer.show(code);
+			},
+		);
+		this.shadow.getElementById("draw-file")?.addEventListener(
+			"click",
+			async () => {
+				const code = await readFile.readFile();
+				graphDrawer.show(code);
+			},
 		);
 	}
 
@@ -103,4 +133,8 @@ export class TopMenu extends HTMLElement {
 		const code = codeEditor!.getCode();
 		graphDrawer!.downloadPng(code);
 	};
+	showDOT() {
+		const code = codeEditor!.getCode();
+		graphDrawer.showDOT(code);
+	}
 }

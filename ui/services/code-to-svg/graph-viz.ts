@@ -74,6 +74,11 @@ function json2Graph(dotJson: string): Graph {
 				{ _gvid, name, nodes, subgraphs, edges, ...graphAttributes }:
 					JsonSubgraph,
 			) => {
+				if (graphAttributes.label) {
+					graphAttributes.label = {
+						html: graphAttributes.label as string,
+					};
+				}
 				return {
 					_gvid,
 					name,
@@ -106,9 +111,11 @@ function json2Graph(dotJson: string): Graph {
 			subgraphs: [],
 			edges: undefined,
 		};
-		graphSubgraph.subgraphs = subgraph.subgraphs?.map((_gvid) =>
-			allSubgraphs.find((sub) => sub._gvid == _gvid) as Subgraph
-		);
+
+		graphSubgraph.subgraphs = subgraph.subgraphs?.map((_gvid) => {
+			const index = allSubgraphs.findIndex((sub) => sub._gvid == _gvid);
+			return allSubgraphs.splice(index, 1) as Subgraph;
+		});
 
 		graphSubgraph.nodes = subgraph.nodes?.map((_gvid) =>
 			nodes.find((node) => node.attributes?._gvid == _gvid) as Node
@@ -119,6 +126,9 @@ function json2Graph(dotJson: string): Graph {
 
 	const graphEdges: Edge[] = edges
 		?.map(({ tail, head, ...attributes }: JsonEdge) => {
+			if (attributes.label) {
+				attributes.label = { html: attributes.label as string };
+			}
 			return {
 				//				_gvid,
 				tail: objectIdToName[tail],
@@ -201,5 +211,11 @@ export class GraphViz implements GraphVizInterface {
 		}) as string;
 
 		return svg;
+	};
+
+	public graphToDot = (graph: Graph): string => {
+		return viz.renderString(graph, {
+			format: "dot",
+		}) as string;
 	};
 }

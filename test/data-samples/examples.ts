@@ -228,7 +228,6 @@ Workbench [label = (
 
 UI [label=(
 	| Service Consumers
-	!/gcp/Angular.svg | Angular
 	!/gcp/Cloud-For-Marketing.svg | React
 	!/gcp/Google-Cloud-Marketplace.svg | Applications
 	!/gcp/Partner-Portal.svg | Vendors

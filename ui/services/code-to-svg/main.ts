@@ -7,6 +7,7 @@ const dotSugar = new DotSugar();
 const graphViz = new GraphViz();
 
 import { Code, CodeToSvgConvertor, Svg } from "./interface.ts";
+import { Graph } from "viz/types";
 
 export class CodeToSVG implements CodeToSvgConvertor {
 	public toShow(code: Code): Svg {
@@ -16,10 +17,26 @@ export class CodeToSVG implements CodeToSvgConvertor {
 		return svg;
 	}
 
+	public toDot(code: Code): Code {
+		const dot = dotSugar.unCoat(code);
+		const graph = graphViz.dotToGraph(dot);
+		console.log(graph);
+		return graphViz.graphToDot(graph);
+	}
+
+	public toGraph(code: Code): Graph {
+		const dot = dotSugar.unCoat(code);
+		const graph = graphViz.dotToGraph(dot);
+		return graph;
+	}
+
 	public async toDownload(code: Code): Promise<Svg> {
 		const svg = this.toShow(code);
 		return await this.sprite(svg);
 	}
+
+	private urlToID = (url: string): string =>
+		(url.split("/").pop() || "").split(".").at(0) || "";
 
 	/** Downloads all innerSVGs and creates one big svg, mainly for downloading*/
 	private sprite = async (svg: Svg): Promise<Svg> => {
@@ -35,7 +52,9 @@ export class CodeToSVG implements CodeToSvgConvertor {
 
 			svg = svg.replace(
 				match[0],
-				`<use href="#${url}" ${match.groups!.attributes}/>`,
+				`<use href="#${this.urlToID(url)}" ${
+					match.groups!.attributes
+				}/>`,
 			);
 		}
 
@@ -46,13 +65,24 @@ export class CodeToSVG implements CodeToSvgConvertor {
 
 	private async downloadInnerSVGs(svgUrls: Set<string>): Promise<string> {
 		const svgPromises = Array.from(svgUrls).map(async (url) => {
+			const id = this.urlToID(url);
 			let svgString = await fetch(url).then((r) => r.text());
 			svgString = svgString
-				.replace("<svg ", `<symbol id="${url}" `)
+				.replace(/id\s*=\s*".*?"/, "")
+				.replace("<svg ", `<symbol id="${id}" `)
 				.replace(
 					"</svg>",
 					"</symbol>",
 				);
+
+			// Add svg id to each class so we can isolate it from other classes with the same name
+			// const parts = svgString.split("<style");
+			// parts.at(1) &&
+			// 	(parts[1] = parts[1].replaceAll(
+			// 		/\.\w/g,
+			// 		(match) => `#${id} ${match}`,
+			// 	));
+			// return parts.join("<style");
 			return svgString;
 		});
 		const svgSprite = `<defs style="display: none"> ${

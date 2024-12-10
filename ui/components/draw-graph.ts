@@ -5,6 +5,8 @@
 type Code = string;
 
 import { CodeToSVG } from "../services/code-to-svg/main.ts";
+import { codeEditor } from "../index.ts";
+
 const codeToSvg = new CodeToSVG();
 
 export class DrawGraph extends HTMLElement {
@@ -37,6 +39,22 @@ export class DrawGraph extends HTMLElement {
 			"xmlns",
 			"http://www.w3.org/2000/svg",
 		);
+	};
+
+	public showDOT = (code: Code): void => {
+		const dot = codeToSvg.toDot(code);
+		console.log(dot);
+
+		const newWindow = globalThis.open();
+		newWindow?.document.write(dot);
+	};
+
+	public showJSON = (): void => {
+		const code = codeEditor.getCode();
+		const json = codeToSvg.toGraph(code);
+		console.log(json);
+		const newWindow = globalThis.open();
+		newWindow?.document.write(JSON.stringify(json, null, 4));
 	};
 
 	public download = async (code: Code, filename: string = "graph.svg") => {
