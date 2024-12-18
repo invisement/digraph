@@ -17,6 +17,8 @@ body {
 	background-color: rgba(var(--background-color), 0.2);
 	padding: 0.5em;
 	height: 1em;
+
+	border: outset;
 }
 
 .content {
@@ -26,14 +28,14 @@ body {
 }
 
 .left-bar {
-	width: 30%;
+	flex: 1;
 	background-color: rgba(var(--background-color), 0.1);
 	overflow: auto;
 	padding: 0.5em;
 }
 
 .right-bar {
-	width: 70%;
+	flex: 3;
 	overflow: auto;
 	padding: 0.5em;
 }
