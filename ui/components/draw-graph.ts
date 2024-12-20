@@ -5,7 +5,7 @@
 type Code = string;
 
 import { CodeToSVG } from "../services/code-to-svg/main.ts";
-import { codeEditor } from "../index.ts";
+import { getCode } from "../state-management.ts";
 
 const codeToSvg = new CodeToSVG();
 
@@ -21,12 +21,15 @@ export class DrawGraph extends HTMLElement {
 		this.shadow.innerHTML = this.html();
 	}
 
-	public show = (code: Code) => {
+	public show = async () => {
+		const code = await getCode();
 		const svg = codeToSvg.toShow(code);
 		this.shadow.querySelector("div")!.innerHTML = svg;
 	};
 
-	public open = (code: Code) => {
+	public open = async () => {
+		const code = await getCode();
+
 		const svg = codeToSvg.toShow(code);
 		// Create a new window/tab
 		const newWindow = globalThis.open()!;
@@ -41,7 +44,9 @@ export class DrawGraph extends HTMLElement {
 		);
 	};
 
-	public showDOT = (code: Code): void => {
+	public showDOT = async (): Promise<void> => {
+		const code = await getCode();
+
 		const dot = codeToSvg.toDot(code);
 		console.log(dot);
 
@@ -49,15 +54,17 @@ export class DrawGraph extends HTMLElement {
 		newWindow?.document.write(dot);
 	};
 
-	public showJSON = (): void => {
-		const code = codeEditor.getCode();
+	public showJSON = async (): Promise<void> => {
+		const code = await getCode();
 		const json = codeToSvg.toGraph(code);
 		console.log(json);
 		const newWindow = globalThis.open();
 		newWindow?.document.write(JSON.stringify(json, null, 4));
 	};
 
-	public download = async (code: Code, filename: string = "graph.svg") => {
+	public download = async (filename: string = "graph.svg") => {
+		const code = await getCode();
+
 		const sprite = await codeToSvg.toDownload(code);
 
 		const blob = new Blob([sprite], {
@@ -71,7 +78,9 @@ export class DrawGraph extends HTMLElement {
 		URL.revokeObjectURL(url);
 	};
 
-	public downloadPng = async (code: Code, filename: string = "graph.png") => {
+	public downloadPng = async (filename: string = "graph.png") => {
+		const code = await getCode();
+
 		const sprite = await codeToSvg.toDownload(code);
 
 		// Create image from SVG

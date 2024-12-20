@@ -1,5 +1,7 @@
-import { codeEditor, graphDrawer } from "../index.ts";
-import { readFile } from "../index.ts";
+///import { graphDrawer } from "../index.ts";
+import { hideEditor, setCode } from "../state-management.ts";
+
+export const graphDrawer = document.querySelector("draw-graph") as DrawGraph;
 
 export class TopMenu extends HTMLElement {
 	//static observedAttributes = [];
@@ -73,16 +75,14 @@ export class TopMenu extends HTMLElement {
 		this.shadow.getElementById("select-file")?.addEventListener(
 			"click",
 			async () => {
-				const code = await readFile.selectFile();
-				codeEditor.style.display = "none";
-				graphDrawer.show(code);
+				await hideEditor();
+				graphDrawer.show();
 			},
 		);
 		this.shadow.getElementById("draw-file")?.addEventListener(
 			"click",
-			async () => {
-				const code = await readFile.readFile();
-				graphDrawer.show(code);
+			() => {
+				graphDrawer.show();
 			},
 		);
 	}
@@ -100,7 +100,7 @@ export class TopMenu extends HTMLElement {
 	showExample = (e: Event) => {
 		const exampleName = (e.currentTarget as HTMLInputElement)?.value;
 		const example = this.examples[exampleName];
-		codeEditor.setCode(example);
+		setCode(example);
 
 		this.showGraph();
 	};
@@ -118,23 +118,18 @@ export class TopMenu extends HTMLElement {
 	};
 
 	showGraph = () => {
-		const code = codeEditor!.getCode();
-		graphDrawer!.show(code);
+		graphDrawer!.show();
 	};
 	openGraph = () => {
-		const code = codeEditor!.getCode();
-		graphDrawer!.open(code);
+		graphDrawer!.open();
 	};
 	downloadGraph = () => {
-		const code = codeEditor!.getCode();
-		graphDrawer!.download(code);
+		graphDrawer!.download();
 	};
 	downloadPng = () => {
-		const code = codeEditor!.getCode();
-		graphDrawer!.downloadPng(code);
+		graphDrawer!.downloadPng();
 	};
 	showDOT() {
-		const code = codeEditor!.getCode();
-		graphDrawer.showDOT(code);
+		graphDrawer.showDOT();
 	}
 }
