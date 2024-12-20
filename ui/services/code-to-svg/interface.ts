@@ -1,4 +1,4 @@
-import { Graph } from "viz/types";
+import type { Graph } from "viz/types";
 
 export type Code = string;
 export type Svg = string;

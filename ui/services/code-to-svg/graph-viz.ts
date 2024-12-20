@@ -45,7 +45,7 @@ export class GraphViz implements GraphVizInterface {
 			images: this.extractImageList(dot),
 		}) as string;
 
-		return new JsonToGraph().convert(json);
+		return new JsonToGraph().convert(JSON.parse(json));
 	};
 
 	public graphToSvg = (graph: Graph): Svg => {

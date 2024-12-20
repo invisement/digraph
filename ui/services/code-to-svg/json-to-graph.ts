@@ -6,20 +6,23 @@ GraphViz accepts Graph type to produce svg format
 
 import { Attributes, Edge, Graph, Node, Subgraph } from "viz/types";
 
-type _GVID = number;
+export type _GVID = number;
 
-type JsonNode = {
+export type JsonNode = {
 	_gvid: _GVID;
 	name: string;
 } & Attributes;
 
-type JsonSubgraph = {
+export type JsonSubgraph = {
+	_gvid: _GVID;
+	name: string;
+
 	nodes?: _GVID[];
 	edges?: _GVID[];
 	subgraphs?: _GVID[];
-} & JsonNode;
+} & Attributes;
 
-type JsonSubgraph2 = {
+export type PreFlatSubgraph = {
 	_gvid: _GVID;
 	name: string;
 	nodes?: _GVID[];
@@ -28,7 +31,7 @@ type JsonSubgraph2 = {
 	graphAttributes?: Attributes;
 };
 
-type JsonSubgraph3 = {
+export type FlatSubgraph = {
 	_gvid: _GVID;
 	name: string;
 	nodes?: Node[];
@@ -37,13 +40,13 @@ type JsonSubgraph3 = {
 	graphAttributes?: Attributes;
 };
 
-type JsonEdge = Attributes & {
+export type JsonEdge = Attributes & {
 	_gvid: _GVID;
 	head: _GVID;
 	tail: _GVID;
 };
 
-type JsonGraph = Attributes & {
+export type JsonGraph = Attributes & {
 	name: string;
 	directed: boolean;
 	strict: boolean;
@@ -56,14 +59,22 @@ type JsonGraph = Attributes & {
 	edgeAttributes?: Attributes;
 };
 
-export class JsonToGraph {
+export interface JsonToGraphConverter {
+	convert(jsonGraph: JsonGraph): Graph;
+	edgeToGraphEdge(jsonEdge: JsonEdge): Edge;
+	objectToNode(jsonNode: JsonNode): Node;
+	objectToSubgraph(jsonObject: JsonSubgraph): PreFlatSubgraph;
+	nestSubgraphs(flatSubgraphs: FlatSubgraph[]): Subgraph[];
+}
+
+export class JsonToGraph implements JsonToGraphConverter {
 	// Graph uses name instead of _gvid in json output
 	objectIdToName: Map<_GVID, string> = new Map();
 
 	objectToSubgraph = (
 		{ _gvid, name, nodes, subgraphs, edges, ...graphAttributes }:
 			JsonSubgraph,
-	) => {
+	): PreFlatSubgraph => {
 		if (graphAttributes.label) {
 			graphAttributes.label = {
 				html: graphAttributes.label as string,
@@ -107,7 +118,7 @@ export class JsonToGraph {
 		};
 	};
 
-	nestSubgraphs = (subgraphs: JsonSubgraph3[]): Subgraph[] => {
+	nestSubgraphs = (subgraphs: FlatSubgraph[]): Subgraph[] => {
 		const nameMap = new Map<number, Subgraph>();
 
 		// Create nodes for all subgraphs first
@@ -143,21 +154,19 @@ export class JsonToGraph {
 		return rootSubgraphs;
 	};
 
-	public convert(dotJson: string): Graph {
-		const {
-			name,
-			directed,
-			strict,
-			_subgraph_cnt,
+	public convert({
+		name,
+		directed,
+		strict,
+		_subgraph_cnt,
 
-			objects,
-			edges,
-			nodeAttributes,
-			edgeAttributes,
+		objects,
+		edges,
+		nodeAttributes,
+		edgeAttributes,
 
-			...graphAttributes
-		} = JSON.parse(dotJson) as JsonGraph;
-
+		...graphAttributes
+	}: JsonGraph): Graph {
 		for (const { _gvid, name } of objects) {
 			this.objectIdToName.set(_gvid, name);
 		}
@@ -172,9 +181,9 @@ export class JsonToGraph {
 		const graphEdges: Edge[] = edges
 			?.map(this.edgeToGraphEdge);
 
-		// convert subgraph nodes from _gvid tpo full node
-		const flatSubgraphs: JsonSubgraph3[] = allSubgraphs.map(
-			(subgraph: JsonSubgraph2) => {
+		// convert subgraph nodes from _gvid to full node
+		const flatSubgraphs: FlatSubgraph[] = allSubgraphs.map(
+			(subgraph: PreFlatSubgraph) => {
 				const subgraphNodes: Node[] | undefined = subgraph.nodes?.map(
 					(_gvid: number) => {
 						return nodes.find((node) =>
