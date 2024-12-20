@@ -1,3 +1,9 @@
+/** GraphViz converts DOT to JSON format/type and
+this module convert that JSON format into Graph type.
+We can manipulate this Graph format for sugar coatings.
+GraphViz accepts Graph type to produce svg format
+*/
+
 import { Attributes, Edge, Graph, Node, Subgraph } from "viz/types";
 
 type _GVID = number;
