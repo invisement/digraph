@@ -1,3 +1,9 @@
+// implements main interface "CodeToSvgConvertor" (code => svg)
+// uses DotSugar to uncoat sugar coating around Code to make it to standard DOT notation
+// uses GraphViz to converts DOT into JSON (Graph) format
+// uses JsonSugar to uncoat sugar coating around JSON (Graph)
+// uses GraphViz to make svg from Graph/JSON format
+
 import { GraphViz } from "./graph-viz.ts";
 import { DotSugar } from "./dot-sugar.ts";
 //import { JsonSugar } from "./json-sugar.ts";
@@ -13,6 +19,7 @@ export class CodeToSVG implements CodeToSvgConvertor {
 	public toShow(code: Code): Svg {
 		const dot = dotSugar.unCoat(code);
 		const graph = graphViz.dotToGraph(dot);
+
 		const svg = graphViz.graphToSvg(graph);
 		return svg;
 	}
@@ -20,7 +27,6 @@ export class CodeToSVG implements CodeToSvgConvertor {
 	public toDot(code: Code): Code {
 		const dot = dotSugar.unCoat(code);
 		const graph = graphViz.dotToGraph(dot);
-		console.log(graph);
 		return graphViz.graphToDot(graph);
 	}
 
@@ -70,10 +76,7 @@ export class CodeToSVG implements CodeToSvgConvertor {
 			svgString = svgString
 				.replace(/id\s*=\s*".*?"/, "")
 				.replace("<svg ", `<symbol id="${id}" `)
-				.replace(
-					"</svg>",
-					"</symbol>",
-				);
+				.replace("</svg>", "</symbol>");
 
 			// Add svg id to each class so we can isolate it from other classes with the same name
 			// const parts = svgString.split("<style");
@@ -86,7 +89,9 @@ export class CodeToSVG implements CodeToSvgConvertor {
 			return svgString;
 		});
 		const svgSprite = `<defs style="display: none"> ${
-			(await Promise.all(svgPromises)).join("\n")
+			(
+				await Promise.all(svgPromises)
+			).join("\n")
 		} </defs>`;
 		return svgSprite;
 	}

@@ -12,3 +12,10 @@ export const codeEditor = document.querySelector("code-editor") as CodeEditor;
 export const graphDrawer = document.querySelector("draw-graph") as DrawGraph;
 
 export const readFile = new ReadFile();
+
+export const getters = {
+	get code(): string {
+		console.log(codeEditor.getCode());
+		return codeEditor.getCode();
+	},
+};

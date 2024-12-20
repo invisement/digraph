@@ -5,16 +5,12 @@
 		"build": "deno run -A jsr:@invisement/husk/transpile-ui",
 		"prod": "deno run -A server.ts",
 		"deploy": "deno task install; deno task build; deployctl deploy --prod --entrypoint=\"deno task prod\" server.ts;",
-		"docs": "deno run -A jsr:@invisement/husk/imports-graph > docs/imports-graph.svg"
+		"docs": "cd docs; deno run -A jsr:@invisement/husk/imports-graph ../ > imports-graph.svg; cd .."
 	},
 	"compilerOptions": {
 		"experimentalDecorators": false,
-		"lib": [
-			"dom",
-			"esnext",
-			"dom.iterable",
-			"deno.ns"
-		]
+		"lib": ["dom", "esnext", "dom.iterable", "deno.ns"],
+		"exclude": ["temp"]
 	},
 	"fmt": {
 		"useTabs": true,
@@ -22,7 +18,6 @@
 	},
 	"imports": {
 		"viz/types": "./viz-js/packages/viz/types/index.d.ts",
-
 		"@deno/deployctl": "jsr:@deno/deployctl@^1.13.0",
 		"@invisement/husk": "jsr:@invisement/husk@^0.4.62",
 		"@invisement/husk/transpile-ui": "jsr:@invisement/husk@^0.4.62/transpile-ui",
@@ -31,9 +26,7 @@
 	},
 	"deploy": {
 		"project": "363f8cf7-178c-4ead-951b-c89327f51a68",
-		"exclude": [
-			"**/node_modules"
-		],
+		"exclude": ["**/node_modules"],
 		"include": [],
 		"entrypoint": "server.ts"
 	}
